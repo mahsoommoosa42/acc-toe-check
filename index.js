@@ -19,35 +19,51 @@ wrapper.on("M_PHYSICS_RESULT", result => {
     frontrightvector = result.tyreContactHeading[1]
     rearleftvector = result.tyreContactHeading[2];
     rearrightvector = result.tyreContactHeading[3];
+    velocityvector = result.velocity;
+    steerratio = 14;
+    maxrotation = 240;
 
     // calculate dot product
-    leftdp = 0;
-    rightdp = 0;
+    fldp = 0;
+    frdp = 0;
+    rldp = 0;
+    rrdp = 0;
     flmag2 = 0;
     frmag2 = 0;
     rlmag2 = 0;
     rrmag2 = 0;
+    vmag2 = 0;
 
     for (i = 0; i < 3; i++)
     {
-        leftdp = leftdp + frontleftvector[i] * rearleftvector[i];
-        rightdp = rightdp + frontrightvector[i] * rearrightvector[i];
+        fldp = fldp + frontleftvector[i] * velocityvector[i];
+        frdp = frdp + frontrightvector[i] * velocityvector[i];
+        rldp = rldp + rearleftvector[i] * velocityvector[i];
+        rrdp = rrdp + rearrightvector[i] * velocityvector[i];
 
         flmag2 = flmag2 + frontleftvector[i] * frontleftvector[i];
         frmag2 = frmag2 + frontrightvector[i] * frontrightvector[i];
         rlmag2 = rlmag2 + rearleftvector[i] * rearleftvector[i];
         rrmag2 = rrmag2 + rearrightvector[i] * rearrightvector[i];
+        vmag2 = vmag2 + velocityvector[i] * velocityvector[i]
     }
 
-    left_cos = leftdp/(Math.sqrt(flmag2) * Math.sqrt(rlmag2));
-    right_cos = rightdp/(Math.sqrt(frmag2) * Math.sqrt(rrmag2));
+    fl_cos = fldp/(Math.sqrt(flmag2) * Math.sqrt(vmag2));
+    fr_cos = frdp/(Math.sqrt(frmag2) * Math.sqrt(vmag2));
+    rl_cos = rldp/(Math.sqrt(rlmag2) * Math.sqrt(vmag2));
+    rr_cos = rrdp/(Math.sqrt(rrmag2) * Math.sqrt(vmag2));
 
-    left_angle = Math.acos(left_cos);
-    right_angle = Math.acos(right_cos);
+    conv = 180 / Math.PI;
+    fl_toe = Math.acos(Math.abs(fl_cos)) * conv;
+    fr_toe = Math.acos(Math.abs(fr_cos)) * conv;
+    rl_toe = Math.acos(Math.abs(rl_cos)) * conv;
+    rr_toe = Math.acos(Math.abs(rr_cos)) * conv;
 
     console.log("Steer Angle : " + result.steerAngle)
-    console.log("Left Angle : " + left_angle * 180 / Math.PI);
-    console.log("Right Angle : " + right_angle * 180 / Math.PI);
+    console.log("FL : " + fl_toe);
+    console.log("FR : " + fr_toe);
+    console.log("RL : " + rl_toe);
+    console.log("RR : " + rr_toe);
 });
 
 //do something when app is closing
