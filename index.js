@@ -37,6 +37,9 @@ wrapper.on("M_PHYSICS_RESULT", result => {
 
     orientation_vector = calculateCarOrientation(result);
 
+    console.log(velocityvector)
+    console.log(orientation_vector)
+
     // calculate dot product
     fldp = 0;
     frdp = 0;
@@ -46,26 +49,30 @@ wrapper.on("M_PHYSICS_RESULT", result => {
     frmag2 = 0;
     rlmag2 = 0;
     rrmag2 = 0;
-    vmag2 = 0;
+    omag2 = 0;
 
     for (i = 0; i < 3; i++)
     {
-        fldp = fldp + frontleftvector[i] * velocityvector[i];
-        frdp = frdp + frontrightvector[i] * velocityvector[i];
-        rldp = rldp + rearleftvector[i] * velocityvector[i];
-        rrdp = rrdp + rearrightvector[i] * velocityvector[i];
+        // remove the component in y-axis
+        if (i == 1) {
+            continue;
+        }
+        fldp = fldp + frontleftvector[i] * orientation_vector[i];
+        frdp = frdp + frontrightvector[i] * orientation_vector[i];
+        rldp = rldp + rearleftvector[i] * orientation_vector[i];
+        rrdp = rrdp + rearrightvector[i] * orientation_vector[i];
 
         flmag2 = flmag2 + frontleftvector[i] * frontleftvector[i];
         frmag2 = frmag2 + frontrightvector[i] * frontrightvector[i];
         rlmag2 = rlmag2 + rearleftvector[i] * rearleftvector[i];
         rrmag2 = rrmag2 + rearrightvector[i] * rearrightvector[i];
-        vmag2 = vmag2 + velocityvector[i] * velocityvector[i]
+        omag2 = omag2 + orientation_vector[i] * orientation_vector[i]
     }
 
-    fl_cos = fldp/(Math.sqrt(flmag2) * Math.sqrt(vmag2));
-    fr_cos = frdp/(Math.sqrt(frmag2) * Math.sqrt(vmag2));
-    rl_cos = rldp/(Math.sqrt(rlmag2) * Math.sqrt(vmag2));
-    rr_cos = rrdp/(Math.sqrt(rrmag2) * Math.sqrt(vmag2));
+    fl_cos = fldp/(Math.sqrt(flmag2) * Math.sqrt(omag2));
+    fr_cos = frdp/(Math.sqrt(frmag2) * Math.sqrt(omag2));
+    rl_cos = rldp/(Math.sqrt(rlmag2) * Math.sqrt(omag2));
+    rr_cos = rrdp/(Math.sqrt(rrmag2) * Math.sqrt(omag2));
 
     conv = 180 / Math.PI;
     fl_toe = Math.acos(Math.abs(fl_cos)) * conv;
