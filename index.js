@@ -14,6 +14,18 @@ function exitHandler(options, exitCode) {
     if (options.exit) process.exit();
 }
 
+function calculateCarOrientation(result) {
+    polar = result.pitch;
+    alpha = result.heading;
+    speed = result.speedKmh 
+
+    x = - speed * Math.cos(polar) * Math.sin(alpha) * 5 / 18;
+    y = speed * Math.sin(polar) * 5 / 18;
+    z = speed * Math.cos(polar) * Math.cos(alpha) * 5 / 18;
+
+    return [x,y,z]
+}
+
 wrapper.on("M_PHYSICS_RESULT", result => {
     frontleftvector = result.tyreContactHeading[0];
     frontrightvector = result.tyreContactHeading[1]
@@ -22,6 +34,8 @@ wrapper.on("M_PHYSICS_RESULT", result => {
     velocityvector = result.velocity;
     steerratio = 14;
     maxrotation = 240;
+
+    orientation_vector = calculateCarOrientation(result);
 
     // calculate dot product
     fldp = 0;
