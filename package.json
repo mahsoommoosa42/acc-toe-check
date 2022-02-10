@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "acc-node-wrapper": "^1.0.6"
+    "acc-node-wrapper": "^1.0.6",
+    "fast-csv": "^4.3.6"
   }
 }
