@@ -27,10 +27,41 @@ function exitHandler(options, exitCode) {
     if (options.exit) process.exit();
 }
 
+function toSave(a)
+{
+    if ((a[0] == 0) && (a[1] == 0) && (a[2] == 0))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+function anglebetween(a, b)
+{
+    // ignore the 2nd axis as we are ignoring the vertical component
+
+    dot = a[0] * b[0] + a[2] * b[2];
+    det = a[0] * b[2] - a[2] * b[0];
+
+    angle = Math.atan2(det, dot) * 180 / Math.PI;
+
+    if (angle > 0)
+    {
+        angle = 180 - angle;
+    }
+    else
+    {
+        angle = -180 - angle;
+    }
+
+    return angle;
+}
+
 function calculateCarOrientation(result) {
     var polar = result.pitch;
     var alpha = result.heading;
-    var speed = result.speedKmh 
+    var speed = result.speedKmh
 
     var x = - speed * Math.cos(polar) * Math.sin(alpha) * 5 / 18;
     var y = speed * Math.sin(polar) * 5 / 18;
@@ -40,72 +71,35 @@ function calculateCarOrientation(result) {
 }
 
 wrapper.on("M_PHYSICS_RESULT", result => {
-    var frontleftvector = result.tyreContactHeading[0];
-    var frontrightvector = result.tyreContactHeading[1]
-    var rearleftvector = result.tyreContactHeading[2];
-    var rearrightvector = result.tyreContactHeading[3];
+    var fl_v = result.tyreContactHeading[0];
+    var fr_v = result.tyreContactHeading[1]
+    var rl_v = result.tyreContactHeading[2];
+    var rr_v = result.tyreContactHeading[3];
     var velocityvector = result.velocity;
     var suspensionTravel = result.suspensionTravel;
     var steerratio = 14;
     var maxrotation = 240;
-    var speed = result.speedKmh 
+    var speed = result.speedKmh
 
     var orientation_vector = calculateCarOrientation(result);
+    
+    var fl_toe = anglebetween(fl_v, orientation_vector);
+    var fr_toe = anglebetween(fr_v, orientation_vector);
+    var rl_toe = anglebetween(rl_v, orientation_vector);
+    var rr_toe = anglebetween(rr_v, orientation_vector);
 
-    console.log(velocityvector)
-    console.log(orientation_vector)
-
-    // calculate dot product
-    var fldp = 0;
-    var frdp = 0;
-    var rldp = 0;
-    var rrdp = 0;
-    var flmag2 = 0;
-    var frmag2 = 0;
-    var rlmag2 = 0;
-    var rrmag2 = 0;
-    var omag2 = 0;
-
-    for (i = 0; i < 3; i++)
-    {
-        // remove the component in y-axis
-        if (i == 1) {
-            continue;
-        }
-        fldp = fldp + frontleftvector[i] * orientation_vector[i];
-        frdp = frdp + frontrightvector[i] * orientation_vector[i];
-        rldp = rldp + rearleftvector[i] * orientation_vector[i];
-        rrdp = rrdp + rearrightvector[i] * orientation_vector[i];
-
-        flmag2 = flmag2 + frontleftvector[i] * frontleftvector[i];
-        frmag2 = frmag2 + frontrightvector[i] * frontrightvector[i];
-        rlmag2 = rlmag2 + rearleftvector[i] * rearleftvector[i];
-        rrmag2 = rrmag2 + rearrightvector[i] * rearrightvector[i];
-        omag2 = omag2 + orientation_vector[i] * orientation_vector[i]
-    }
-
-    var fl_cos = fldp/(Math.sqrt(flmag2) * Math.sqrt(omag2));
-    var fr_cos = frdp/(Math.sqrt(frmag2) * Math.sqrt(omag2));
-    var rl_cos = rldp/(Math.sqrt(rlmag2) * Math.sqrt(omag2));
-    var rr_cos = rrdp/(Math.sqrt(rrmag2) * Math.sqrt(omag2));
-
-    var conv = 180 / Math.PI;
-    var fl_toe = Math.acos(Math.abs(fl_cos)) * conv;
-    var fr_toe = Math.acos(Math.abs(fr_cos)) * conv;
-    var rr_toe = Math.acos(Math.abs(rr_cos)) * conv;
-    var rl_toe = Math.acos(Math.abs(rl_cos)) * conv;
-
-    csvStream.write({
-        speed : speed,
-        steerangle : result.steerAngle,
-        FL_Toe : fl_toe,
-        FR_Toe : fr_toe,
-        RL_Toe : rl_toe,
-        RR_Toe : rr_toe,
-        FL_H : suspensionTravel[0],
-        FR_H : suspensionTravel[1],
-        RL_H : suspensionTravel[2],
-        RR_H : suspensionTravel[3]
+    if (toSave(velocityvector))
+        csvStream.write({
+            speed : speed,
+            steerangle : result.steerAngle,
+            FL_Toe : fl_toe,
+            FR_Toe : fr_toe,
+            RL_Toe : rl_toe,
+            RR_Toe : rr_toe,
+            FL_H : suspensionTravel[0],
+            FR_H : suspensionTravel[1],
+            RL_H : suspensionTravel[2],
+            RR_H : suspensionTravel[3]
     });
 
 });
