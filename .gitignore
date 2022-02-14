@@ -76,3 +76,9 @@ typings/
 .fusebox/
 
 sessiondata/*
+
+# pkg dependencies
+index-linux
+index-macos
+index-windows.exe
+
