@@ -90,11 +90,21 @@ wrapper.on("M_PHYSICS_RESULT", result => {
 
     if (toSave(velocityvector))
     {
+        // Correct the toes to steer angle
+
+        var steerAngle = result.steerAngle;
+
+        fl_toe = fl_toe - steerAngle * maxrotation / steerratio;
+        fr_toe = -fr_toe + steerAngle * maxrotation / steerratio;
+
+
+        console.log(fl_toe + " " + fr_toe);
+
         csvStream.write({
             speed : speed,
             steerangle : result.steerAngle,
             FL_Toe : fl_toe,
-            FR_Toe : -fr_toe,
+            FR_Toe : fr_toe,
             RL_Toe : rl_toe,
             RR_Toe : -rr_toe,
             FL_H : suspensionTravel[0],
