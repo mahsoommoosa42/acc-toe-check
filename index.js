@@ -77,8 +77,6 @@ wrapper.on("M_PHYSICS_RESULT", result => {
     var rr_v = result.tyreContactHeading[3];
     var velocityvector = result.velocity;
     var suspensionTravel = result.suspensionTravel;
-    var steerratio = 14;
-    var maxrotation = 240;
     var speed = result.speedKmh
 
     var orientation_vector = calculateCarOrientation(result);
@@ -92,10 +90,8 @@ wrapper.on("M_PHYSICS_RESULT", result => {
     {
         // Correct the toes to steer angle
 
-        var steerAngle = result.steerAngle;
-
-        fl_toe = fl_toe - steerAngle * maxrotation / steerratio;
-        fr_toe = -fr_toe + steerAngle * maxrotation / steerratio;
+        fl_toe = fl_toe;
+        fr_toe = -fr_toe;
 
 
         console.log(fl_toe + " " + fr_toe);
