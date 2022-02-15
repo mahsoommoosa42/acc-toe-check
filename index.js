@@ -89,18 +89,20 @@ wrapper.on("M_PHYSICS_RESULT", result => {
     var rr_toe = anglebetween(rr_v, orientation_vector);
 
     if (toSave(velocityvector))
+    {
         csvStream.write({
             speed : speed,
             steerangle : result.steerAngle,
             FL_Toe : fl_toe,
-            FR_Toe : fr_toe,
+            FR_Toe : -fr_toe,
             RL_Toe : rl_toe,
-            RR_Toe : rr_toe,
+            RR_Toe : -rr_toe,
             FL_H : suspensionTravel[0],
             FR_H : suspensionTravel[1],
             RL_H : suspensionTravel[2],
             RR_H : suspensionTravel[3]
-    });
+        });
+    }
 
 });
 
