@@ -93,6 +93,9 @@ wrapper.on("M_PHYSICS_RESULT", result => {
         fl_toe = fl_toe;
         fr_toe = -fr_toe;
 
+        // toe in decimal degrees
+        // sus travel in mm
+
         csvStream.write({
             speed : speed,
             steerangle : result.steerAngle,
@@ -100,10 +103,10 @@ wrapper.on("M_PHYSICS_RESULT", result => {
             FR_Toe : fr_toe,
             RL_Toe : rl_toe,
             RR_Toe : -rr_toe,
-            FL_H : suspensionTravel[0],
-            FR_H : suspensionTravel[1],
-            RL_H : suspensionTravel[2],
-            RR_H : suspensionTravel[3]
+            FL_H : suspensionTravel[0] * 1000,
+            FR_H : suspensionTravel[1] * 1000,
+            RL_H : suspensionTravel[2] * 1000,
+            RR_H : suspensionTravel[3] * 1000
         });
     }
 
