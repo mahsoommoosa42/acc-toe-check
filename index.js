@@ -93,9 +93,6 @@ wrapper.on("M_PHYSICS_RESULT", result => {
         fl_toe = fl_toe;
         fr_toe = -fr_toe;
 
-
-        console.log(fl_toe + " " + fr_toe);
-
         csvStream.write({
             speed : speed,
             steerangle : result.steerAngle,
