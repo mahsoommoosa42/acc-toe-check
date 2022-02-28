@@ -2,7 +2,6 @@ const ACCNodeWrapper = require('acc-node-wrapper');
 const wrapper = new ACCNodeWrapper();
 const fs = require('fs');
 const fast_csv = require('fast-csv');
-const { time } = require('console');
 
 const date = new Date();
 const timeStamp = date.getTime();
